@@ -1,0 +1,82 @@
+
+#### general settings
+
+name: Inpaint_places2_64_L4K10_k7
+use_tb_logger: false
+model: Inpaint
+gpu_ids: [5]
+
+
+#### datasets
+
+datasets:
+  train:
+    name: places2
+    mode: Inpaint
+    img_dataroot: "/home/wcr/datasets/places2/train" # path to ground-truth imgs
+    mask_dataroot: "/home/wcr/datasets/mask/testing_mask_dataset/" # path to external masks, if not provided, rectangular mask will be generated in dataset
+    # mask_type: -1 # -1: regular(center hole) | 0: regular(random position) | 1-6: external irregular mask(1 for 1%-10%, 2 for 10%-20% and so on)
+    img_size: 64
+    ksize: 7
+
+    use_shuffle: true
+    n_workers: 4  # per GPU
+    batch_size: 16
+    use_flip: true
+    use_rot: false
+
+  val:
+    name: places2
+    mode: Inpaint
+    img_dataroot: "/home/wcr/datasets/places2/val/" # path to ground-truth imgs
+    mask_dataroot: "/home/wcr/datasets/mask/testing_mask_dataset/" # path to external masks, if not provided, rectangular mask will be generated in dataset
+    mask_type: 3
+    img_size: 64
+    ksize: 7
+
+
+#### network structures
+
+network_G:
+  L: 4
+  K: 10
+  in_nc: 3
+  n_trans: 0
+  heat: 1.
+  input_size: 64
+
+#### path
+
+path:
+  pretrain_model_G: ~
+  strict_load: true
+  resume_state: ~
+
+
+#### training settings: learning rate scheme, loss
+
+train:
+  lr_G: !!float 5e-4
+  beta1: 0.9
+  beta2: 0.999
+  niter: 200000
+  warmup_iter: -1  # no warm up
+
+  lr_scheme: MultiStepLR
+  lr_steps_rel: [0.5, 0.75, 0.9, 0.95]
+  lr_gamma: 0.5
+
+  manual_seed: 10
+
+  val_freq: 10000
+  # train_encoder_delay: 100000
+
+  weight_decay_G: !!float 1e-5
+  gradient_clipping: 10
+
+
+#### logger
+
+logger:
+  print_freq: 200
+  save_checkpoint_freq: 10000

@@ -1,0 +1,30 @@
+name: FlowFill_celeba_hq_48
+model: Inpaint
+gpu_ids: [0]
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: celeba-hq
+    mode: Inpaint
+    img_dataroot: /home/wcr/datasets/celeba/test # path to ground-truth imgs
+    mask_dataroot: /home/wcr/datasets/mask/testing_mask_dataset # path to external masks, if not provided, rectangular mask will be generated in dataset
+    # mask_type: -1
+    img_size: 48
+
+
+#### network
+network_G:
+  in_nc: 3
+  L: 3
+  K: 8
+  n_trans: 0
+  input_size: 48
+  heat: 0.9
+
+test:
+  gaussian_scale: 0.9
+
+
+#### path
+path:
+  pretrain_model_G: "/home/wcr/FlowFill/experiments/Inpaint_celeba_hq_64_L3K10/models/latest_G.pth"
